@@ -8,10 +8,12 @@ top to bottom direction
 Person(User, "Собственник", "Пользователь мобильного приложения для собственников жилья")
 
 System(PropDevelopmentApp, "Мобильное приложение", "Мобильное приложение PropDevelopment для собственников")
+System(SmartHomeIntegration, "Backend-слой интеграции умного дома", "Хранит контракты, права доступа, связи собственников и устройств, журнал действий.")
 
-System_Ext(SmartHomeExternal, "Умный дом", "Внешняя система партнера 'Умный дом'")
+System_Ext(SmartHomeExternal, "Внешняя система партнера 'Умный дом'", "Обрабатывает команды умного дома, а так же хранит и обрабатывает биометрию/ГРЗ авто")
 
 Rel(User, PropDevelopmentApp, "Использует", "HTTPS")
-Rel(PropDevelopmentApp, SmartHomeExternal, "Отправляет REST-запросы", "HTTPS")
+Rel(PropDevelopmentApp, SmartHomeIntegration, "Использует", "HTTPS")
+Rel(SmartHomeIntegration, SmartHomeExternal, "Отправляет REST-запросы", "HTTPS")
 
 @enduml
