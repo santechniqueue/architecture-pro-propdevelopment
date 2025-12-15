@@ -14,3 +14,9 @@
 - [Диаграмма контекста C4](Task3/C4_Context.puml)
 
 ![C4_Context](Task3/C4_Context.svg)
+
+- [Доработанная диаграмма контейнеров C4](Task3/C4_Containers_With_Integration.drawio)
+
+![C4_Containers](Task3/C4_Containers_With_Integration.png)
+
+
