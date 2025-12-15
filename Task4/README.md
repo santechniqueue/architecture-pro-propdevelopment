@@ -5,3 +5,11 @@
 | `pd-ns-editor` (Role, namespace)    | Управление ресурсами в *своём* namespace: `create/update/patch/delete` для Deployments/Services/Ingress/Jobs/CronJobs/ConfigMaps/PVC + `pods/exec` (диагностика). | `grp-dev` (разработчики; RoleBinding выдаётся в каждый доменный namespace: `pd-sales`, `pd-tenant`, `pd-finance`, `pd-data`)              |
 | `pd-secret-reader` (ClusterRole)    | Привилегированный просмотр секретов: `get/list/watch` Secrets (кластерно).                                                                                        | `grp-security` (ИБ/аудит)                                                                                                                 |
 | `pd-cluster-operator` (ClusterRole) | Настройка кластера (платформа): управление Namespaces + управление StorageClasses/IngressClasses/PV; просмотр Nodes.                                              | `grp-platform` (платформенная команда DevOps/эксплуатации)                                                                                |
+
+# Как запустить
+
+```bash
+bash create-users.sh
+bash create-roles.sh
+bash bind.sh
+```
