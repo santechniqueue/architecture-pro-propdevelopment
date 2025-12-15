@@ -19,4 +19,14 @@
 
 ![C4_Containers](Task3/C4_Containers_With_Integration.png)
 
+# Задание 4
+
+## Как запустить
+
+```bash
+bash create-users.sh
+bash create-roles.sh
+bash bind.sh
+```
+
 
