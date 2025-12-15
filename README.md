@@ -29,4 +29,31 @@ bash create-roles.sh
 bash bind.sh
 ```
 
+# Задание 5
 
+## Как запустить
+
+```bash
+bash run-services.sh
+kubectl apply -f non-admin-api-allow.yaml
+```
+
+## Как проверить
+
+```bash
+kubectl run test-ok1-$RANDOM --rm -i -t --restart=Never --image=alpine --labels role=front-end -- sh
+/ # wget -qO- --timeout=2 http://back-end-api-app | head
+/ # exit
+
+kubectl run test-ok2-$RANDOM --rm -i -t --restart=Never --image=alpine --labels role=admin-front-end -- sh
+/ # wget -qO- --timeout=2 http://admin-back-end-api-app | head
+/ # exit
+
+kubectl run test-x1-$RANDOM --rm -i -t --restart=Never --image=alpine --labels role=front-end -- sh
+/ # wget -qO- --timeout=2 http://admin-back-end-api-app || echo "BLOCKED_OK"
+/ # exit
+```
+
+Результат проверок:
+
+![Результат проверок](Task5/task5_network_test.png)
