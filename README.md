@@ -57,3 +57,24 @@ kubectl run test-x1-$RANDOM --rm -i -t --restart=Never --image=alpine --labels r
 Результат проверок:
 
 ![Результат проверок](Task5/task5_network_test.png)
+
+# Задание 6
+
+## Как запустить
+
+```bash
+bash run-minikube.sh
+```
+Дождаться запуска миникуба
+
+```bash
+bash simulate-incident.sh
+```
+
+```bash
+kubectl logs kube-apiserver-minikube -n  kube-system | grep audit.k8s.io/v1 > audit.log
+```
+
+```bash
+bash extract.sh
+```
