@@ -107,3 +107,44 @@ Error from server (Forbidden): error when creating "insecure-manifests/03-root-u
 ```
 
 Так же, после выполнения команды `kubectl -n audit-zone get pods` мы не должны видеть поды в audit-zone
+
+
+### secure
+
+```bash
+kubectl get --raw=/readyz
+```
+Должен вывести `ok`
+
+```bash
+kubectl get ns audit-zone --show-labels | grep restricted
+```
+
+Должен содержать:
+- `pod-security.kubernetes.io/enforce=restricted`
+- `pod-security.kubernetes.io/warn=restricted`
+- `pod-security.kubernetes.io/audit=restricted`
+
+```bash
+kubectl apply -n audit-zone --dry-run=server -f secure-manifests/
+```
+
+Должен вывести:
+```commandline
+pod/pod-secure-01 configured (server dry run)
+pod/pod-secure-02 configured (server dry run)
+pod/pod-secure-03 configured (server dry run)
+```
+
+```bash
+kubectl get pods -n audit-zone
+```
+
+Должен вывести, что все поды в статусе `Running`, READY - `1/1`:
+
+```commandline
+NAME            READY   STATUS    RESTARTS   AGE
+pod-secure-01   1/1     Running   0          8m26s
+pod-secure-02   1/1     Running   0          8m26s
+pod-secure-03   1/1     Running   0          8m26s
+```
