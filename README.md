@@ -78,3 +78,32 @@ kubectl logs kube-apiserver-minikube -n  kube-system | grep audit.k8s.io/v1 > au
 ```bash
 bash extract.sh
 ```
+
+# Задание 7 
+
+## Как проверить
+
+Для начала, необходимо создать namespace:
+
+```bash
+kubectl apply -f 01-create-namespace.yaml
+kubectl get ns audit-zone --show-labels
+```
+
+### insecure
+
+Необходимо выполнить команду:
+
+```bash
+kubectl -n audit-zone apply -f ./insecure-manifests/
+```
+
+После выполнения команды должны получить ошибки:
+
+```
+Error from server (Forbidden): error when creating "insecure-manifests/01-privileged-pod.yaml": pods "pod-privileged" is forbidden: violates PodSecurity "restricted:latest": privileged (container "nginx" must not set securityContext.privileged=true), allowPrivilegeEscalation != false (container "nginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "nginx" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "nginx" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "nginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+Error from server (Forbidden): error when creating "insecure-manifests/02-hostpath-pod.yaml": pods "pod-hostpath" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "nginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "nginx" must set securityContext.capabilities.drop=["ALL"]), restricted volume types (volume "host-etc" uses restricted volume type "hostPath"), runAsNonRoot != true (pod or container "nginx" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "nginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+Error from server (Forbidden): error when creating "insecure-manifests/03-root-user-pod.yaml": pods "pod-root" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "nginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "nginx" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "nginx" must set securityContext.runAsNonRoot=true), runAsUser=0 (container "nginx" must not set runAsUser=0), seccompProfile (pod or container "nginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+```
+
+Так же, после выполнения команды `kubectl -n audit-zone get pods` мы не должны видеть поды в audit-zone
