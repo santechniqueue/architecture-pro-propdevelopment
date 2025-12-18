@@ -83,68 +83,24 @@ bash extract.sh
 
 ## Как проверить
 
-Для начала, необходимо создать namespace:
+### Подготовка окружения - чистый кластер, политики, secure pods
 
 ```bash
-kubectl apply -f 01-create-namespace.yaml
-kubectl get ns audit-zone --show-labels
+bash ./verify/init.sh
 ```
 
-### insecure
-
-Необходимо выполнить команду:
+### Security-проверки
 
 ```bash
-kubectl -n audit-zone apply -f ./insecure-manifests/
+bash ./verify/validate-security.sh
 ```
 
-После выполнения команды должны получить ошибки:
+В результате должен быть успешный статус проверки: `✅ validate-security.sh завершён успешно`
 
-```
-Error from server (Forbidden): error when creating "insecure-manifests/01-privileged-pod.yaml": pods "pod-privileged" is forbidden: violates PodSecurity "restricted:latest": privileged (container "nginx" must not set securityContext.privileged=true), allowPrivilegeEscalation != false (container "nginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "nginx" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "nginx" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "nginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
-Error from server (Forbidden): error when creating "insecure-manifests/02-hostpath-pod.yaml": pods "pod-hostpath" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "nginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "nginx" must set securityContext.capabilities.drop=["ALL"]), restricted volume types (volume "host-etc" uses restricted volume type "hostPath"), runAsNonRoot != true (pod or container "nginx" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "nginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
-Error from server (Forbidden): error when creating "insecure-manifests/03-root-user-pod.yaml": pods "pod-root" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "nginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "nginx" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "nginx" must set securityContext.runAsNonRoot=true), runAsUser=0 (container "nginx" must not set runAsUser=0), seccompProfile (pod or container "nginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
-```
-
-Так же, после выполнения команды `kubectl -n audit-zone get pods` мы не должны видеть поды в audit-zone
-
-
-### secure
+### Admission-проверки
 
 ```bash
-kubectl get --raw=/readyz
-```
-Должен вывести `ok`
-
-```bash
-kubectl get ns audit-zone --show-labels | grep restricted
+bash ./verify/verify-admission.sh
 ```
 
-Должен содержать:
-- `pod-security.kubernetes.io/enforce=restricted`
-- `pod-security.kubernetes.io/warn=restricted`
-- `pod-security.kubernetes.io/audit=restricted`
-
-```bash
-kubectl apply -n audit-zone --dry-run=server -f secure-manifests/
-```
-
-Должен вывести:
-```commandline
-pod/pod-secure-01 configured (server dry run)
-pod/pod-secure-02 configured (server dry run)
-pod/pod-secure-03 configured (server dry run)
-```
-
-```bash
-kubectl get pods -n audit-zone
-```
-
-Должен вывести, что все поды в статусе `Running`, READY - `1/1`:
-
-```commandline
-NAME            READY   STATUS    RESTARTS   AGE
-pod-secure-01   1/1     Running   0          8m26s
-pod-secure-02   1/1     Running   0          8m26s
-pod-secure-03   1/1     Running   0          8m26s
-```
+В результате должен быть успешный статус проверки: `✅ verify-admission.sh завершён успешно`
