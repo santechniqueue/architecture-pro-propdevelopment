@@ -1,0 +1,19 @@
+@startuml
+title PropDevelopment Smart Home Integration Context Diagram
+
+top to bottom direction
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(User, "Собственник", "Пользователь мобильного приложения для собственников жилья")
+
+System(PropDevelopmentApp, "Мобильное приложение", "Мобильное приложение PropDevelopment для собственников")
+System(SmartHomeIntegration, "Backend-слой интеграции умного дома", "Хранит контракты, права доступа, связи собственников и устройств, журнал действий.")
+
+System_Ext(SmartHomeExternal, "Внешняя система партнера 'Умный дом'", "Обрабатывает команды умного дома, а так же хранит и обрабатывает биометрию/ГРЗ авто")
+
+Rel(User, PropDevelopmentApp, "Использует", "HTTPS")
+Rel(PropDevelopmentApp, SmartHomeIntegration, "Использует", "HTTPS")
+Rel(SmartHomeIntegration, SmartHomeExternal, "Отправляет REST-запросы", "HTTPS")
+
+@enduml
